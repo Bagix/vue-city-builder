@@ -19,8 +19,6 @@ export default class FieldMenu extends Vue {
   mode!: string
 
   public handleAdd(): void {
-    console.log('wchodze');
-
     const jsonCity = window.localStorage.getItem('city');
     const newBuilding = { fieldId: this.fieldId, type: 'A' };
     let city: IBuilding[] = [];
