@@ -1,20 +1,25 @@
 <template>
  <ul class="list">
-   <li @click="handleClick">Option A</li>
+   <li v-if="mode=== 'add'" @click="handleAdd">Option A</li>
+   <li v-if="mode=== 'delete'" @click="handleDelete">Delete</li>
  </ul>
 </template>
 
 <script lang="ts">
 import { Vue } from 'vue-class-component';
 import { Prop } from 'vue-property-decorator';
+import store from '@/store';
 
 export default class FieldMenu extends Vue {
   @Prop()
-  selectedField!: number
+  fieldId!: number
 
-  handleClick(): void {
+  @Prop()
+  mode!: string
+
+  public handleAdd(): void {
     const jsonCity = window.localStorage.getItem('city');
-    const newBuilding = { field: this.selectedField, buildind: 'A' };
+    const newBuilding = { field_id: this.fieldId, buildind: 'A' };
     let city = [];
 
     if (!jsonCity) {
@@ -26,7 +31,7 @@ export default class FieldMenu extends Vue {
     city = JSON.parse(jsonCity);
 
     // eslint-disable-next-line max-len
-    const existingBuilding = city.findIndex((el:Record<string, number|string>) => el.field === this.selectedField);
+    const existingBuilding = city.findIndex((el:Record<string, number|string>) => el.field_id === this.fieldId);
 
     if (existingBuilding !== -1) {
       city.splice(existingBuilding, 1, newBuilding);
@@ -35,6 +40,22 @@ export default class FieldMenu extends Vue {
     }
 
     window.localStorage.setItem('city', JSON.stringify(city));
+    store.commit('toggleMenu');
+  }
+
+  public handleDelete(): void {
+    const jsonCity = window.localStorage.getItem('city')!;
+    const city = JSON.parse(jsonCity);
+
+    // eslint-disable-next-line max-len
+    const existingBuilding = city.findIndex((el:Record<string, number|string>) => el.field_id === this.fieldId);
+
+    if (existingBuilding !== -1) {
+      city.splice(existingBuilding, 1);
+      window.localStorage.setItem('city', JSON.stringify(city));
+    }
+
+    store.commit('toggleMenu');
   }
 }
 
@@ -50,6 +71,10 @@ export default class FieldMenu extends Vue {
   height: 125px;
   background-color: #fff;
   list-style: none;
+
+   li {
+     cursor: pointer;
+   }
 }
 
 </style>

@@ -1,7 +1,9 @@
 <template>
   <div class="game-board">
-    <Field v-for="(field, index) in 16" :key="index" @openMenu="toogleMenu(index)"/>
-    <FieldMenu v-if="showMenu" :selectedField="selectedFieldIndex"/>
+    <!-- <Field v-for="(field, index) in 16" :key="index" @openMenu="toogleMenu(index)"/> -->
+    <component v-bind:is="getBlock(index)" v-for="(field, index) in 16"
+    :key="index" @openMenu="(mode) => toogleMenu(mode,index)"/>
+    <FieldMenu v-if="isMenuOpen" :fieldId="selectedFieldId" :mode="menuMode"/>
   </div>
 </template>
 
@@ -9,6 +11,7 @@
 import { Options, Vue } from 'vue-class-component';
 
 import Field from './components/Field.vue';
+import Building from './components/Building.vue';
 import FieldMenu from './components/FieldMenu.vue';
 import store from './store';
 
@@ -16,18 +19,39 @@ import store from './store';
   components: {
     Field,
     FieldMenu,
+    Building,
   },
 })
 export default class App extends Vue {
-  showMenu = false;
+  selectedFieldId: null | number = null;
 
-  selectedFieldIndex: null | number = null;
+  menuMode: string = 'add' || 'delete';
 
-  toogleMenu(index: number): void {
-    // console.log(store.state.isMenuOpen);
-    // store.commit('toggleMenu');
-    this.selectedFieldIndex = index;
-    this.showMenu = !this.showMenu;
+  public get isMenuOpen(): boolean {
+    return store.state.isMenuOpen;
+  }
+
+  public getBlock(fieldId: number): string {
+    const jsonCity = window.localStorage.getItem('city');
+
+    if (!jsonCity) {
+      return 'Field';
+    }
+
+    const city = JSON.parse(jsonCity);
+    const building = city.find((el:Record<string, number|string>) => el.field_id === fieldId);
+
+    if (building) {
+      return 'Building';
+    }
+
+    return 'Field';
+  }
+
+  public toogleMenu(mode: string, index: number): void {
+    this.selectedFieldId = index;
+    this.menuMode = mode;
+    store.commit('toggleMenu');
   }
 }
 </script>

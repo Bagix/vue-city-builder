@@ -1,13 +1,17 @@
 <template>
-  <div class="field" @click="handleClick"/>
+  <div class="building" @click="handleClick"/>
 </template>
 
 <script lang="ts">
 import { Vue } from 'vue-class-component';
+import { Prop } from 'vue-property-decorator';
 
-export default class Field extends Vue {
+export default class Building extends Vue {
+  @Prop()
+  fieldId!: number
+
   public handleClick(): void {
-    this.$emit('openMenu', 'add');
+    this.$emit('openMenu', 'delete');
   }
 }
 
@@ -15,10 +19,10 @@ export default class Field extends Vue {
 
 <style scoped lang="scss">
 
-.field {
+.building {
   width: 100px;
   height: 100px;
-  background-color: #cdcdcd;
+  background-color: #0f0;
   border: 1px solid #000;
   cursor: pointer;
 }
