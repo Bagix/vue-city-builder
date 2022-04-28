@@ -1,9 +1,18 @@
 <template>
-  <div class="game-board">
-    <!-- <Field v-for="(field, index) in 16" :key="index" @openMenu="toogleMenu(index)"/> -->
-    <component v-bind:is="getBlock(index)" v-for="(field, index) in 16"
-    :key="index" @openMenu="(mode) => toogleMenu(mode,index)"/>
-    <FieldMenu v-if="isMenuOpen" :fieldId="selectedFieldId" :mode="menuMode"/>
+  <div ref="gameBoard" class="game-board">
+    <component
+      v-for="(field, index) in 16"
+      :is="getBlock(index)"
+      :key="index"
+      @openMenu="(mode) => openMenu(mode,index)"
+      @click="getMousePosition($event)"
+     />
+
+    <FieldMenu v-if="isMenuOpen"
+      :style="mousePosition"
+      :fieldId="selectedFieldId"
+      :mode="menuMode"
+     />
   </div>
 </template>
 
@@ -14,6 +23,7 @@ import Field from './components/Field.vue';
 import Building from './components/Building.vue';
 import FieldMenu from './components/FieldMenu.vue';
 import store from './store';
+import { IBuilding } from './Utils/types';
 
 @Options({
   components: {
@@ -22,10 +32,13 @@ import store from './store';
     Building,
   },
 })
+
 export default class App extends Vue {
   selectedFieldId: null | number = null;
 
-  menuMode: string = 'add' || 'delete';
+  menuMode: string = 'add' || 'edit';
+
+  mousePosition: Record<string, string> = {};
 
   public get isMenuOpen(): boolean {
     return store.state.isMenuOpen;
@@ -38,8 +51,8 @@ export default class App extends Vue {
       return 'Field';
     }
 
-    const city = JSON.parse(jsonCity);
-    const building = city.find((el:Record<string, number|string>) => el.field_id === fieldId);
+    const city: IBuilding[] = JSON.parse(jsonCity);
+    const building = city.find((el) => el.fieldId === fieldId);
 
     if (building) {
       return 'Building';
@@ -48,7 +61,18 @@ export default class App extends Vue {
     return 'Field';
   }
 
-  public toogleMenu(mode: string, index: number): void {
+  public getMousePosition(event: MouseEvent): void {
+    const board = this.$refs.gameBoard as HTMLElement;
+    const topValue = event.clientY - board.getBoundingClientRect().top;
+    const leftValue = event.clientX - board.getBoundingClientRect().left;
+
+    this.mousePosition = {
+      top: `${topValue}px`,
+      left: `${leftValue}px`,
+    };
+  }
+
+  public openMenu(mode: string, index: number): void {
     this.selectedFieldId = index;
     this.menuMode = mode;
     store.commit('toggleMenu');

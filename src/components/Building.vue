@@ -11,7 +11,7 @@ export default class Building extends Vue {
   fieldId!: number
 
   public handleClick(): void {
-    this.$emit('openMenu', 'delete');
+    this.$emit('openMenu', 'edit');
   }
 }
 
