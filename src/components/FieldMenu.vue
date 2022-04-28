@@ -54,10 +54,10 @@ export default class FieldMenu extends Vue {
       return;
     }
 
-    const city = JSON.parse(jsonCity);
+    const city: IBuilding[] = JSON.parse(jsonCity);
 
     // eslint-disable-next-line max-len
-    const existingBuilding = city.findIndex((el:Record<string, number|string>) => el.field_id === this.fieldId);
+    const existingBuilding = city.findIndex((el) => el.fieldId === this.fieldId);
 
     if (existingBuilding !== -1) {
       city.splice(existingBuilding, 1);
