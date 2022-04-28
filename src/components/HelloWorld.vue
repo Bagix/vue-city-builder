@@ -1,6 +1,6 @@
 <template>
   <div class="hello">
-    <h1>{{ msg }}</h1>
+    <h1 @click="test">{{ msg }}-{{msg2}}</h1>
     <p>
       For a guide and recipes on how to configure / customize this project,<br>
       check out the
@@ -34,15 +34,18 @@
 </template>
 
 <script lang="ts">
-import { Options, Vue } from 'vue-class-component';
+import { Vue } from 'vue-class-component';
+import { Prop } from 'vue-property-decorator';
 
-@Options({
-  props: {
-    msg: String,
-  },
-})
 export default class HelloWorld extends Vue {
+  @Prop()
   msg!: string
+
+  msg2 = '';
+
+  test(): void {
+    this.msg2 = 'dziala';
+  }
 }
 </script>
 

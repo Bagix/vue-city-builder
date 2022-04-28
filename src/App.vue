@@ -1,21 +1,43 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js + TypeScript App"/>
+  <div class="game-board">
+    <Field v-for="(field, index) in 16" :key="index" @openMenu="toogleMenu(index)"/>
+    <FieldMenu v-if="showMenu" :selectedField="selectedFieldIndex"/>
+  </div>
 </template>
 
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
-import HelloWorld from './components/HelloWorld.vue';
+
+import Field from './components/Field.vue';
+import FieldMenu from './components/FieldMenu.vue';
+import store from './store';
 
 @Options({
   components: {
-    HelloWorld,
+    Field,
+    FieldMenu,
   },
 })
-export default class App extends Vue {}
+export default class App extends Vue {
+  showMenu = false;
+
+  selectedFieldIndex: null | number = null;
+
+  toogleMenu(index: number): void {
+    // console.log(store.state.isMenuOpen);
+    // store.commit('toggleMenu');
+    this.selectedFieldIndex = index;
+    this.showMenu = !this.showMenu;
+  }
+}
 </script>
 
 <style lang="scss">
+
+* {
+  box-sizing: border-box;
+}
+
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -24,4 +46,13 @@ export default class App extends Vue {}
   color: #2c3e50;
   margin-top: 60px;
 }
+
+.game-board {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  width: 400px;
+  margin: auto;
+}
+
 </style>
