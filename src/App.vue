@@ -1,4 +1,5 @@
 <template>
+    Bank: {{ currentBankValue }}
   <div ref="gameBoard" class="game-board">
     <component
       v-for="(field, index) in 16"
@@ -23,7 +24,7 @@ import Field from './components/Field.vue';
 import Building from './components/Building.vue';
 import FieldMenu from './components/FieldMenu.vue';
 import store from './store';
-import { IBuilding } from './Utils/types';
+import { IBuildingField } from './Utils/types';
 
 @Options({
   components: {
@@ -44,6 +45,10 @@ export default class App extends Vue {
     return store.state.isMenuOpen;
   }
 
+  public get currentBankValue(): number {
+    return store.state.bank;
+  }
+
   public getBlock(fieldId: number): string {
     const jsonCity = window.localStorage.getItem('city');
 
@@ -51,7 +56,7 @@ export default class App extends Vue {
       return 'Field';
     }
 
-    const city: IBuilding[] = JSON.parse(jsonCity);
+    const city: IBuildingField[] = JSON.parse(jsonCity);
     const building = city.find((el) => el.fieldId === fieldId);
 
     if (building) {
@@ -76,6 +81,18 @@ export default class App extends Vue {
     this.selectedFieldId = index;
     this.menuMode = mode;
     store.commit('toggleMenu');
+  }
+
+  public mounted(): void {
+    const savedBankValue = window.localStorage.getItem('bank');
+
+    console.log('bank', savedBankValue);
+
+    if (!savedBankValue) {
+      return;
+    }
+
+    store.commit('setBank', Number(savedBankValue));
   }
 }
 </script>
