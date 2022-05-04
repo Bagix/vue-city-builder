@@ -14,16 +14,12 @@ export default createStore({
       state.isMenuOpen = !state.isMenuOpen;
     },
     substractBank(state, payload) {
-      console.log('tutaj', payload);
-
       state.bank -= payload;
     },
     addBank(state, payload) {
       state.bank += payload;
     },
     setBank(state, payload) {
-      console.log(payload);
-
       state.bank = payload;
     },
   },
