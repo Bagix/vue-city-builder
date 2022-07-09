@@ -5,6 +5,7 @@
     :key="building.type"
     class="option"
     :class="{'disabled': isTooExpensive(building.cost)}"
+    :title="buildingCostString(building.cost)"
     @click="handleAdd(building)">
       {{building.type}}
     </li>
@@ -33,6 +34,14 @@ export default class FieldMenu extends Vue {
 
   public get currentResources(): Record<string, number> {
     return store.state.resources;
+  }
+
+  public buildingCostString(cost:IBuildingCost): string {
+    const x = Object.entries(cost).map((resource) => `${resource[0]}: ${resource[1]}`);
+    return `
+      Cost:
+      ${x.toString()}
+    `;
   }
 
   public get buildingOptions(): IBuilding[] {

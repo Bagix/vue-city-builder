@@ -1,7 +1,11 @@
 <template>
-   <span v-for="(resource, name) in currentResources"  :key="name">
-      {{name}}:{{resource}}
-   </span>
+<div class="resources-box">
+   <p v-for="(resource, name) in currentResources"  :key="name" :class="name">
+      <span class="name">{{name}}:</span>
+      <span class="value">{{resource}}</span>
+   </p>
+</div>
+
   <div ref="gameBoard" class="game-board">
     <component
       v-for="(field, index) in 16"
@@ -128,6 +132,35 @@ export default class App extends Vue {
   flex-wrap: wrap;
   width: 400px;
   margin: auto;
+}
+
+.resources-box {
+  display: flex;
+  justify-content: space-between;
+  margin: 16px 0;
+  font-weight: bold;
+  width: 400px;
+  margin: auto;
+
+  .value {
+    margin-left: 5px;
+  }
+
+  .gold .name {
+    color: gold
+  }
+
+  .stones .name {
+    color: gray
+  }
+
+  .woods .name {
+    color: brown
+  }
+
+  .workers .name {
+    color: darksalmon
+  }
 }
 
 </style>
