@@ -5,8 +5,8 @@
     :key="building.type"
     class="option"
     :class="{'disabled': isTooExpensive(building.cost)}"
-    @click="handleAdd(building.type, building.cost)">
-      Option {{building.type}} ({{building.cost}} gold)
+    @click="handleAdd(building)">
+      {{building.type}}
     </li>
   </template>
 
@@ -20,61 +20,75 @@
 import { Vue } from 'vue-class-component';
 import { Prop } from 'vue-property-decorator';
 import store from '@/store';
-import { IBuilding, IBuildingField } from '@/Utils/types';
+import {
+  IBuilding, IBuildingCost, IBuildingField,
+} from '@/Utils/types';
 
 export default class FieldMenu extends Vue {
   @Prop()
   fieldId!: number
 
-  @Prop()
-  mode!: string
+  @Prop({ require: true })
+  mode!: string;
 
-  public get currentBankValue(): number {
-    return store.state.bank;
+  public get currentResources(): Record<string, number> {
+    return store.state.resources;
   }
 
   public get buildingOptions(): IBuilding[] {
-    return store.state.buildings.sort((a, b) => a.cost - b.cost);
+    return store.state.buildings;
   }
 
-  public isTooExpensive(cost: number): boolean {
-    return !!(cost > this.currentBankValue);
+  public isTooExpensive(cost: IBuildingCost): boolean {
+    return Object.entries(cost).some((resource) => resource[1] > this.currentResources[resource[0]]);
   }
 
-  public handleAdd(type: string, cost: number): void {
-    if (this.isTooExpensive(cost)) {
+  public handleAdd(building: IBuilding): void {
+    if (this.isTooExpensive(building.cost)) {
       return;
     }
+
+    console.log('cos jest', building);
 
     const jsonCity = window.localStorage.getItem('city');
-    const newBuilding = { fieldId: this.fieldId, type };
-    let city: IBuildingField[] = [];
+    const newBuilding = { fieldId: this.fieldId, type: building.type };
+
+    if (building.isInstant) {
+      store.commit('addResources', building.generate);
+    }
 
     if (!jsonCity) {
-      city.push(newBuilding);
-      window.localStorage.setItem('city', JSON.stringify(city));
-      store.commit('toggleMenu');
+      this.initCity(newBuilding, building.cost);
       return;
     }
 
-    city = JSON.parse(jsonCity);
+    const city = JSON.parse(jsonCity) as IBuildingField[];
+    const currentDate = (new Date()).toString();
 
-    // eslint-disable-next-line max-len
-    const existingBuilding = city.findIndex((el) => el.fieldId === this.fieldId);
+    city.push(newBuilding);
 
-    if (existingBuilding !== -1) {
-      city.splice(existingBuilding, 1, newBuilding);
-    } else {
-      city.push(newBuilding);
-    }
-
-    this.updateBank(cost);
+    this.updateResources(building.cost);
 
     window.localStorage.setItem('city', JSON.stringify(city));
+    window.localStorage.setItem('citySavedTime', currentDate);
     store.commit('toggleMenu');
   }
 
-  public updateBank(amount?: number): void {
+  /**
+   * Initialize city
+   * @param newBuilding new building object
+   * @param cost cost of new building
+   */
+  public initCity(newBuilding: IBuildingField, cost: IBuildingCost): void {
+    const currentDate = (new Date()).toString();
+
+    window.localStorage.setItem('city', JSON.stringify([newBuilding]));
+    this.updateResources(cost);
+    window.localStorage.setItem('citySavedTime', currentDate);
+    store.commit('toggleMenu');
+  }
+
+  public updateResources(cost?: IBuildingCost): void {
     if (this.mode === 'edit') {
       const jsonCity = window.localStorage.getItem('city');
 
@@ -83,20 +97,22 @@ export default class FieldMenu extends Vue {
       }
 
       const city: IBuildingField[] = JSON.parse(jsonCity);
-      const building = city.find((el) => el.fieldId === this.fieldId);
-      const buildingInfo = store.state.buildings.find((b) => b.type === building?.type);
-      const cost = buildingInfo?.cost ?? 0;
-      store.commit('addBank', cost);
-      window.localStorage.setItem('bank', this.currentBankValue.toString());
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const building = city.find((el) => el.fieldId === this.fieldId)!;
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const buildingInfo = store.state.buildings.find((b) => b.type === building.type)!;
+      const buildingCost = buildingInfo.cost;
+      store.commit('addResources', buildingCost);
+      window.localStorage.setItem('resources', JSON.stringify(this.currentResources));
       return;
     }
 
-    if (!amount) {
+    if (!cost) {
       return;
     }
 
-    store.commit('substractBank', amount);
-    window.localStorage.setItem('bank', this.currentBankValue.toString());
+    store.commit('substractResources', cost);
+    window.localStorage.setItem('resources', JSON.stringify(this.currentResources));
   }
 
   public handleDelete(): void {
@@ -111,7 +127,7 @@ export default class FieldMenu extends Vue {
     const existingBuilding = city.findIndex((el) => el.fieldId === this.fieldId);
 
     if (existingBuilding !== -1) {
-      this.updateBank();
+      this.updateResources();
       city.splice(existingBuilding, 1);
       window.localStorage.setItem('city', JSON.stringify(city));
     }

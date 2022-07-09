@@ -1,5 +1,7 @@
 <template>
-    Bank: {{ currentBankValue }}
+   <span v-for="(resource, name) in currentResources"  :key="name">
+      {{name}}:{{resource}}
+   </span>
   <div ref="gameBoard" class="game-board">
     <component
       v-for="(field, index) in 16"
@@ -21,16 +23,20 @@
 import { Options, Vue } from 'vue-class-component';
 
 import Field from './components/Field.vue';
-import Building from './components/Building.vue';
+import House from './components/Buildings/House.vue';
+import Mine from './components/Buildings/Mine.vue';
+import Sawmill from './components/Buildings/Sawmill.vue';
 import FieldMenu from './components/FieldMenu.vue';
 import store from './store';
-import { IBuildingField } from './Utils/types';
+import { IBuildingField, IResources } from './Utils/types';
 
 @Options({
   components: {
     Field,
     FieldMenu,
-    Building,
+    House,
+    Mine,
+    Sawmill,
   },
 })
 
@@ -45,8 +51,8 @@ export default class App extends Vue {
     return store.state.isMenuOpen;
   }
 
-  public get currentBankValue(): number {
-    return store.state.bank;
+  public get currentResources(): IResources {
+    return store.state.resources;
   }
 
   public getBlock(fieldId: number): string {
@@ -60,7 +66,7 @@ export default class App extends Vue {
     const building = city.find((el) => el.fieldId === fieldId);
 
     if (building) {
-      return 'Building';
+      return `${building.type}`;
     }
 
     return 'Field';
@@ -84,15 +90,19 @@ export default class App extends Vue {
   }
 
   public mounted(): void {
-    const savedBankValue = window.localStorage.getItem('bank');
+    const savedResourcesValue = window.localStorage.getItem('resources');
+    const lastDateString = window.localStorage.getItem('citySavedTime');
 
-    console.log('bank', savedBankValue);
-
-    if (!savedBankValue) {
+    if (!savedResourcesValue || !lastDateString) {
       return;
     }
 
-    store.commit('setBank', Number(savedBankValue));
+    const lastDate = new Date(lastDateString);
+    const currentDate = new Date();
+    const minutes = Math.trunc((currentDate.getTime() - lastDate.getTime()) / 60000);
+
+    const resources = JSON.parse(savedResourcesValue);
+    store.commit('setResources', resources);
   }
 }
 </script>

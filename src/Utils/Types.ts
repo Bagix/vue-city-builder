@@ -3,7 +3,29 @@ export interface IBuildingField {
   type: string;
 }
 
+export interface IBuildingCost {
+  gold: number;
+  stones?: number;
+  woods?: number;
+  workers?: number;
+}
+
+export interface IBuildingGenerate {
+  stones?: number;
+  woods?: number;
+  workers?: number;
+}
+
 export interface IBuilding {
   type: string;
-  cost: number;
+  isInstant: boolean;
+  cost: IBuildingCost;
+  generate: IBuildingGenerate;
+}
+
+export interface IResources {
+  gold: number;
+  stones: number;
+  woods: number;
+  workers: number;
 }

@@ -6,7 +6,7 @@
 import { Vue } from 'vue-class-component';
 import { Prop } from 'vue-property-decorator';
 
-export default class Building extends Vue {
+export default class Sawmill extends Vue {
   @Prop()
   fieldId!: number
 
