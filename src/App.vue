@@ -32,7 +32,7 @@ import Mine from './components/Buildings/Mine.vue';
 import Sawmill from './components/Buildings/Sawmill.vue';
 import FieldMenu from './components/FieldMenu.vue';
 import store from './store';
-import { IBuildingField, IResources } from './Utils/types';
+import { IBuilding, IBuildingField, IResources } from './Utils/types';
 
 @Options({
   components: {
@@ -93,20 +93,34 @@ export default class App extends Vue {
     store.commit('toggleMenu');
   }
 
-  public mounted(): void {
+  public updateResources(): void {
     const savedResourcesValue = window.localStorage.getItem('resources');
     const lastDateString = window.localStorage.getItem('citySavedTime');
+    const jsonCity = window.localStorage.getItem('city');
 
-    if (!savedResourcesValue || !lastDateString) {
+    if (!savedResourcesValue || !lastDateString || !jsonCity) {
       return;
     }
 
+    const city = JSON.parse(jsonCity) as IBuilding[];
+    const resources = JSON.parse(savedResourcesValue) as Record<string, number>;
     const lastDate = new Date(lastDateString);
     const currentDate = new Date();
     const minutes = Math.trunc((currentDate.getTime() - lastDate.getTime()) / 60000);
 
-    const resources = JSON.parse(savedResourcesValue);
+    city.forEach((building) => {
+      const currentBuilding = store.state.buildings.find((baseBuilding) => baseBuilding.type === building.type)!;
+
+      Object.entries(currentBuilding.generate).forEach((entry) => {
+        resources[entry[0]] += entry[1]! * minutes;
+      });
+    });
+
     store.commit('setResources', resources);
+  }
+
+  public mounted(): void {
+    this.updateResources();
   }
 }
 </script>

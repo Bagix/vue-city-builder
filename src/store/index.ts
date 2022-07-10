@@ -12,14 +12,16 @@ export default createStore({
     buildings: [
       {
         type: 'House',
-        isInstant: true,
+        instantResources: {
+          workers: 5,
+        },
         cost: {
           gold: 3,
           stones: 2,
           woods: 2,
         },
         generate: {
-          workers: 5,
+          gold: 1,
         },
       },
       {

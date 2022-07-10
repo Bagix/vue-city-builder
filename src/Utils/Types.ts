@@ -11,6 +11,7 @@ export interface IBuildingCost {
 }
 
 export interface IBuildingGenerate {
+  gold?: number;
   stones?: number;
   woods?: number;
   workers?: number;
@@ -18,7 +19,7 @@ export interface IBuildingGenerate {
 
 export interface IBuilding {
   type: string;
-  isInstant: boolean;
+  instantResources?: IBuildingGenerate;
   cost: IBuildingCost;
   generate: IBuildingGenerate;
 }

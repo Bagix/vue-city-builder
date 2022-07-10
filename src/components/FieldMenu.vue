@@ -62,8 +62,8 @@ export default class FieldMenu extends Vue {
     const jsonCity = window.localStorage.getItem('city');
     const newBuilding = { fieldId: this.fieldId, type: building.type };
 
-    if (building.isInstant) {
-      store.commit('addResources', building.generate);
+    if (building.instantResources) {
+      store.commit('addResources', building.instantResources);
     }
 
     if (!jsonCity) {
