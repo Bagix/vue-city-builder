@@ -7,6 +7,7 @@ export default createStore({
       gold: 20,
       stones: 20,
       woods: 20,
+      workers: 50, // temporary solution
     },
     resources: {
       gold: 10,
@@ -31,7 +32,6 @@ export default createStore({
       },
       {
         type: 'Mine',
-        isInstant: false,
         cost: {
           gold: 4,
           woods: 3,
@@ -43,7 +43,6 @@ export default createStore({
       },
       {
         type: 'Sawmill',
-        isInstant: false,
         cost: {
           gold: 2,
           workers: 2,
@@ -67,16 +66,24 @@ export default createStore({
     },
     addResources(state, payload) {
       const resources = state.resources as Record<string, number>;
+      const limits = state.resourcesLimits as Record<string, number>;
 
       Object.keys(payload).forEach((key) => {
-        resources[key] += payload[key];
+        const tempSum = resources[key] + payload[key];
+
+        if (tempSum < limits[key]) {
+          resources[key] = tempSum;
+        } else {
+          resources[key] = limits[key];
+        }
       });
     },
     setResources(state, payload) {
       const resources = state.resources as Record<string, number>;
+      const limits = state.resourcesLimits as Record<string, number>;
 
       Object.keys(payload).forEach((key) => {
-        resources[key] = payload[key];
+        resources[key] = payload[key] < limits[key] ? payload[key] : limits[key];
       });
     },
   },

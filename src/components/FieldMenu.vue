@@ -57,8 +57,6 @@ export default class FieldMenu extends Vue {
       return;
     }
 
-    console.log('cos jest', building);
-
     const jsonCity = window.localStorage.getItem('city');
     const newBuilding = { fieldId: this.fieldId, type: building.type };
 
@@ -110,6 +108,11 @@ export default class FieldMenu extends Vue {
       const building = city.find((el) => el.fieldId === this.fieldId)!;
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const buildingInfo = store.state.buildings.find((b) => b.type === building.type)!;
+
+      if (buildingInfo.instantResources) {
+        store.commit('substractResources', buildingInfo.instantResources);
+      }
+
       const buildingCost = buildingInfo.cost;
       store.commit('addResources', buildingCost);
       window.localStorage.setItem('resources', JSON.stringify(this.currentResources));
