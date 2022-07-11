@@ -107,12 +107,18 @@ export default class App extends Vue {
     const lastDate = new Date(lastDateString);
     const currentDate = new Date();
     const minutes = Math.trunc((currentDate.getTime() - lastDate.getTime()) / 60000);
+    const limits = store.state.resourcesLimits as Record<string, number>;
 
     city.forEach((building) => {
       const currentBuilding = store.state.buildings.find((baseBuilding) => baseBuilding.type === building.type)!;
 
       Object.entries(currentBuilding.generate).forEach((entry) => {
-        resources[entry[0]] += entry[1]! * minutes;
+        const resourceSum = resources[entry[0]] + entry[1]! * minutes;
+        if (resourceSum < limits[entry[0]]) {
+          resources[entry[0]] = resourceSum;
+        } else {
+          resources[entry[0]] = limits[entry[0]];
+        }
       });
     });
 

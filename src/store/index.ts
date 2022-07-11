@@ -3,6 +3,11 @@ import { createStore } from 'vuex';
 export default createStore({
   state: {
     isMenuOpen: false,
+    resourcesLimits: {
+      gold: 20,
+      stones: 20,
+      woods: 20,
+    },
     resources: {
       gold: 10,
       stones: 5,
