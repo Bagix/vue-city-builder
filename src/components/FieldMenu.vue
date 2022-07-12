@@ -37,10 +37,10 @@ export default class FieldMenu extends Vue {
   }
 
   public buildingCostString(cost:IBuildingCost): string {
-    const x = Object.entries(cost).map((resource) => `${resource[0]}: ${resource[1]}`);
+    const costs = Object.entries(cost).map((resource) => `${resource[0]}: ${resource[1]}`);
     return `
       Cost:
-      ${x.toString()}
+      ${costs.toString()}
     `;
   }
 
