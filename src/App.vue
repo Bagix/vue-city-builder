@@ -177,4 +177,11 @@ export default class App extends Vue {
   }
 }
 
+.resources-box {
+  border: 2px solid black;
+  border-radius: 10px;
+  padding: 5px 15px;
+  margin-bottom: 16px;
+}
+
 </style>
