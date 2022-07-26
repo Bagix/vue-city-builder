@@ -1,10 +1,10 @@
 <template>
-<div class="resources-box">
-   <p v-for="(resource, name) in currentResources"  :key="name" :class="name">
+  <div class="resources-box">
+    <p v-for="(resource, name) in currentResources"  :key="name" :class="name">
       <span class="name">{{name}}:</span>
       <span class="value">{{resource}}</span>
-   </p>
-</div>
+    </p>
+  </div>
 
   <div ref="gameBoard" class="game-board">
     <component
@@ -13,14 +13,17 @@
       :key="index"
       @openMenu="(mode) => openMenu(mode,index)"
       @click="getMousePosition($event)"
-     />
+      @dropBuilding="((building) => dropBuilding(building, index))"
+    />
 
-    <FieldMenu v-if="isMenuOpen"
+    <FieldMenu
+      v-if="isMenuOpen"
       :style="mousePosition"
       :fieldId="selectedFieldId"
       :mode="menuMode"
      />
   </div>
+  <SideMenu/>
 </template>
 
 <script lang="ts">
@@ -28,6 +31,7 @@ import { Options, Vue } from 'vue-class-component';
 
 import Field from './components/Field.vue';
 import House from './components/Buildings/House.vue';
+import SideMenu from './components/SideMenu.vue';
 import Mine from './components/Buildings/Mine.vue';
 import Sawmill from './components/Buildings/Sawmill.vue';
 import FieldMenu from './components/FieldMenu.vue';
@@ -41,11 +45,12 @@ import { IBuilding, IBuildingField, IResources } from './Utils/types';
     House,
     Mine,
     Sawmill,
+    SideMenu,
   },
 })
 
 export default class App extends Vue {
-  selectedFieldId: null | number = null;
+selectedFieldId: null | number = null;
 
   menuMode: string = 'add' || 'edit';
 
@@ -57,6 +62,40 @@ export default class App extends Vue {
 
   public get currentResources(): IResources {
     return store.state.resources;
+  }
+
+  public dropBuilding(type: string, fieldId: number): void {
+    console.log('łapaj', type, fieldId);
+
+    const jsonCity = window.localStorage.getItem('city');
+    const buildingsArray = store.state.buildings;
+    const newBuilding = { fieldId, type };
+    const building = buildingsArray.find((b) => b.type === type)!;
+
+    if (!jsonCity) {
+      const currentDate = (new Date()).toString();
+
+      window.localStorage.setItem('city', JSON.stringify([newBuilding]));
+      window.localStorage.setItem('citySavedTime', currentDate);
+      store.commit('substractResources', building.cost);
+      window.localStorage.setItem('resources', JSON.stringify(this.currentResources));
+      return;
+    }
+
+    if (building.instantResources) {
+      store.commit('addResources', building.instantResources);
+    }
+
+    const city = JSON.parse(jsonCity) as IBuildingField[];
+    const currentDate = (new Date()).toString();
+
+    city.push(newBuilding);
+
+    window.localStorage.setItem('city', JSON.stringify(city));
+    window.localStorage.setItem('citySavedTime', currentDate);
+
+    store.commit('substractResources', building.cost);
+    window.localStorage.setItem('resources', JSON.stringify(this.currentResources));
   }
 
   public getBlock(fieldId: number): string {
