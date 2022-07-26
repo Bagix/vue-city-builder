@@ -3,7 +3,9 @@
     <component v-for="(building, index) in buildingOptions"
       :key="index"
       :is="building.type"
+      :class="{'disabled': isTooExpensive(building.cost)}"
       :draggable="!isTooExpensive(building.cost)"
+      :title="buildingCostString(building.cost)"
       @dragstart="handleDragStart($event, building.type)"
     />
   </div>
@@ -17,6 +19,7 @@ import Mine from '@/components/Buildings/Mine.vue';
 import Sawmill from '@/components/Buildings/Sawmill.vue';
 import store from '@/store';
 import { IBuilding, IBuildingCost } from '@/Utils/types';
+import { buildingCostString } from '@/Utils/share';
 
 @Options({
   components: {
@@ -32,6 +35,10 @@ export default class SideMenu extends Vue {
 
   public get currentResources(): Record<string, number> {
     return store.state.resources;
+  }
+
+  public buildingCostString(cost:IBuildingCost): string {
+    return buildingCostString(cost);
   }
 
   public handleDragStart(e: DragEvent, buildingType: string): void {
@@ -50,6 +57,18 @@ export default class SideMenu extends Vue {
 }
 </script>
 
-<style lang="scss">
+<style scoped lang="scss">
+
+.side-menu {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  height: 400px;
+}
+
+.disabled {
+  background-image: linear-gradient(#000 33%, #222 66%, transparent);
+  cursor: default;
+}
 
 </style>

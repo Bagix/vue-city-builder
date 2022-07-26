@@ -1,4 +1,5 @@
 <template>
+  <button class="theme-switch" :class="{'light': isDarkTheme}" @click="switchTheme">Switch Theme</button>
   <div class="resources-box">
     <p v-for="(resource, name) in currentResources"  :key="name" :class="name">
       <span class="name">{{name}}:</span>
@@ -6,29 +7,29 @@
     </p>
   </div>
 
-  <div ref="gameBoard" class="game-board">
-    <component
-      v-for="(field, index) in 16"
-      :is="getBlock(index)"
-      :key="index"
-      @openMenu="(mode) => openMenu(mode,index)"
-      @click="getMousePosition($event)"
-      @dropBuilding="((building) => dropBuilding(building, index))"
-    />
-
-    <FieldMenu
-      v-if="isMenuOpen"
-      :style="mousePosition"
-      :fieldId="selectedFieldId"
-      :mode="menuMode"
-     />
+  <div class="wrapper">
+    <div ref="gameBoard" class="game-board">
+      <component
+        v-for="(field, index) in 16"
+        :is="getBlock(index)"
+        :key="index"
+        @openMenu="(mode) => openMenu(mode,index)"
+        @click="getMousePosition($event)"
+        @dropBuilding="((building) => dropBuilding(building, index))"
+      />
+      <FieldMenu
+        v-if="isMenuOpen"
+        :style="mousePosition"
+        :fieldId="selectedFieldId"
+        :mode="menuMode"
+       />
+    </div>
+    <SideMenu/>
   </div>
-  <SideMenu/>
 </template>
 
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
-
 import Field from './components/Field.vue';
 import House from './components/Buildings/House.vue';
 import SideMenu from './components/SideMenu.vue';
@@ -50,11 +51,13 @@ import { IBuilding, IBuildingField, IResources } from './Utils/types';
 })
 
 export default class App extends Vue {
-selectedFieldId: null | number = null;
+  public isDarkTheme = false;
 
-  menuMode: string = 'add' || 'edit';
+  public selectedFieldId: null | number = null;
 
-  mousePosition: Record<string, string> = {};
+  public menuMode: string = 'add' || 'edit';
+
+  public mousePosition: Record<string, string> = {};
 
   public get isMenuOpen(): boolean {
     return store.state.isMenuOpen;
@@ -65,8 +68,6 @@ selectedFieldId: null | number = null;
   }
 
   public dropBuilding(type: string, fieldId: number): void {
-    console.log('łapaj', type, fieldId);
-
     const jsonCity = window.localStorage.getItem('city');
     const buildingsArray = store.state.buildings;
     const newBuilding = { fieldId, type };
@@ -158,6 +159,18 @@ selectedFieldId: null | number = null;
     store.commit('setResources', resources);
   }
 
+  public switchTheme(): void {
+    this.isDarkTheme = !this.isDarkTheme;
+    const html = document.querySelector('html')!;
+    console.log('tutaj', this.isDarkTheme, html);
+
+    if (this.isDarkTheme) {
+      html.classList.add('dark');
+    } else {
+      html.classList.remove('dark');
+    }
+  }
+
   public mounted(): void {
     this.updateResources();
   }
@@ -170,13 +183,21 @@ selectedFieldId: null | number = null;
   box-sizing: border-box;
 }
 
+html {
+  transition: background .2s linear;
+
+  &.dark {
+    background: #0f1437;
+  }
+}
+
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
+  margin-top: 20px;
 }
 
 .game-board {
@@ -184,7 +205,6 @@ selectedFieldId: null | number = null;
   display: flex;
   flex-wrap: wrap;
   width: 400px;
-  margin: auto;
 }
 
 .resources-box {
@@ -194,6 +214,7 @@ selectedFieldId: null | number = null;
   font-weight: bold;
   width: 400px;
   margin: auto;
+  background: #fefefe;
 
   .value {
     margin-left: 5px;
@@ -221,6 +242,47 @@ selectedFieldId: null | number = null;
   border-radius: 10px;
   padding: 5px 15px;
   margin-bottom: 16px;
+}
+
+.wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.wrapper .side-menu {
+  margin-left: 50px;
+}
+
+.theme-switch {
+  font-size: 16px;
+  background: #0f1437;
+  color: #fff;
+  padding: 10px 16px;
+  border-radius: 5px;
+  margin-bottom: 60px;
+  border-color: #0f1437;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background .1s linear, color .1s linear .2s, box-shadow .25s cubic-bezier(0,1.25,.47,1.5);
+
+  &:hover {
+    box-shadow: 0 0 10px 10px #0f1437;
+  }
+
+  &.light {
+    background: #fefefe;
+    color: #0f1437;
+    border-color: #fefefe;
+
+    &:hover {
+      box-shadow: 0 0 10px 10px #fefefe;
+    }
+  }
+
+  &:active {
+    border-color: transparent;
+  }
 }
 
 </style>

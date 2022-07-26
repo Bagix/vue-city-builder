@@ -21,9 +21,8 @@
 import { Vue } from 'vue-class-component';
 import { Prop } from 'vue-property-decorator';
 import store from '@/store';
-import {
-  IBuilding, IBuildingCost, IBuildingField,
-} from '@/Utils/types';
+import { IBuilding, IBuildingCost, IBuildingField } from '@/Utils/types';
+import { buildingCostString } from '@/Utils/share';
 
 export default class FieldMenu extends Vue {
   @Prop()
@@ -37,11 +36,7 @@ export default class FieldMenu extends Vue {
   }
 
   public buildingCostString(cost:IBuildingCost): string {
-    const costs = Object.entries(cost).map((resource) => `${resource[0]}: ${resource[1]}`);
-    return `
-      Cost:
-      ${costs.toString()}
-    `;
+    return buildingCostString(cost);
   }
 
   public get buildingOptions(): IBuilding[] {

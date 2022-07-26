@@ -1,9 +1,11 @@
 <template>
   <div class="field"
+    :class="{'drag-enter': isDragged}"
     @click="handleClick"
     @drop="handleDrop"
+    @dragenter.prevent="toggleDragEffect"
+    @dragleave="toggleDragEffect"
     @dragover.prevent
-    @dragenter.prevent
   />
 </template>
 
@@ -11,6 +13,8 @@
 import { Vue } from 'vue-class-component';
 
 export default class Field extends Vue {
+  public isDragged = false;
+
   public handleClick(): void {
     this.$emit('openMenu', 'add');
   }
@@ -23,6 +27,10 @@ export default class Field extends Vue {
     const building = e.dataTransfer.getData('building');
     this.$emit('dropBuilding', building);
   }
+
+  public toggleDragEffect(): void {
+    this.isDragged = !this.isDragged;
+  }
 }
 
 </script>
@@ -32,9 +40,14 @@ export default class Field extends Vue {
 .field {
   width: 100px;
   height: 100px;
-  background-color: #cdcdcd;
+  background: #cdcdcd;
   border: 1px solid #000;
   cursor: pointer;
+  transition: background .1s linear;
+}
+
+.drag-enter {
+  background: #ffff63;
 }
 
 </style>
