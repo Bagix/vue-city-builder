@@ -183,6 +183,11 @@ export default class App extends Vue {
   box-sizing: border-box;
 }
 
+body,
+html {
+  margin: 0;
+}
+
 html {
   transition: background .2s linear;
 
@@ -197,7 +202,6 @@ html {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 20px;
 }
 
 .game-board {
@@ -260,14 +264,16 @@ html {
   color: #fff;
   padding: 10px 16px;
   border-radius: 5px;
-  margin-bottom: 60px;
+  margin: 30px 0 60px;
   border-color: #0f1437;
   font-weight: bold;
   cursor: pointer;
-  transition: background .1s linear, color .1s linear .2s, box-shadow .25s cubic-bezier(0,1.25,.47,1.5);
+  transition: background .1s linear, color .1s linear .2s, box-shadow .2s linear,
+              transform .2s cubic-bezier(0,1.25,.47,1.5);
 
   &:hover {
     box-shadow: 0 0 10px 10px #0f1437;
+    transform: scale(2)
   }
 
   &.light {

@@ -43,11 +43,12 @@ export default class Field extends Vue {
   background: #cdcdcd;
   border: 1px solid #000;
   cursor: pointer;
-  transition: background .1s linear;
+  transition: background .15s linear, transform .15s linear;
 }
 
 .drag-enter {
   background: #ffff63;
+  transform: scale(1.15)
 }
 
 </style>
