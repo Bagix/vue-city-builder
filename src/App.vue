@@ -36,7 +36,7 @@ import House from './components/Buildings/House.vue';
 import SideMenu from './components/SideMenu.vue';
 import Mine from './components/Buildings/Mine.vue';
 import Sawmill from './components/Buildings/Sawmill.vue';
-import FieldMenu from './components/FieldMenu.vue';
+import FieldMenu from './components/Menu/FieldMenu.vue';
 import DayNight from './components/DayNight.vue';
 import store from './store';
 import {
@@ -54,7 +54,6 @@ import {
     DayNight,
   },
 })
-
 export default class App extends Vue {
   public isDarkTheme = false;
 
