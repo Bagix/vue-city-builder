@@ -8,13 +8,13 @@
   </div>
 
   <div class="wrapper">
-    <div class="game-board">
+    <div ref="gameBoard" class="game-board">
       <component
         v-for="(field, index) in 16"
         :is="getBlock(index)"
         :key="index"
         @openMenu="(mode) => openMenu(mode,index)"
-        @click="getMousePosition($event)"
+        @click="getMousePosition"
         @dropBuilding="((building) => dropBuilding(building, index))"
       />
       <FieldMenu
