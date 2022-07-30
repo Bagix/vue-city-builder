@@ -40,7 +40,7 @@ export default class Field extends Vue {
 .field {
   width: 100px;
   height: 100px;
-  background: #cdcdcd;
+  background: url('../assets/field-bg.jpg');
   border: 1px solid #000;
   cursor: pointer;
   transition: background .15s linear, transform .15s linear;

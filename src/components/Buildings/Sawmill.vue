@@ -1,5 +1,7 @@
 <template>
-  <div class="building" @click="handleClick"/>
+  <div class="building" @click="handleClick">
+    <div class="image"/>
+  </div>
 </template>
 
 <script lang="ts">
@@ -22,9 +24,17 @@ export default class Sawmill extends Vue {
 .building {
   width: 100px;
   height: 100px;
-  background-color: #0f0;
+  padding: 10px;
   border: 1px solid #000;
   cursor: pointer;
+  background-image: url('../../assets/field-bg.jpg');
+
+  .image {
+    width: 100%;
+    height: 100%;
+    background-color: #8e1515;
+    mask: url('../../assets/sawmil.svg') no-repeat center;
+  }
 }
 
 </style>

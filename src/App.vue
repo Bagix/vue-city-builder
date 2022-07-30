@@ -229,15 +229,15 @@ html {
   }
 
   .stones .name {
-    color: gray
+    color: #000
   }
 
   .woods .name {
-    color: brown
+    color: #8e1515
   }
 
   .workers .name {
-    color: darksalmon
+    color: #ed143d
   }
 }
 

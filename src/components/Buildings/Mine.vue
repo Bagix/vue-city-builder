@@ -1,5 +1,7 @@
 <template>
-  <div class="building" @click="handleClick"/>
+  <div class="building" @click="handleClick">
+    <div class="image"/>
+  </div>
 </template>
 
 <script lang="ts">
@@ -22,9 +24,17 @@ export default class Mine extends Vue {
 .building {
   width: 100px;
   height: 100px;
-  background-color: rgb(128, 27, 2);
+  padding: 10px;
   border: 1px solid #000;
   cursor: pointer;
+  background-image: url('../../assets/field-bg.jpg');
+
+  .image {
+    width: 100%;
+    height: 100%;
+    background-color: #000;
+    mask: url('../../assets/mine.svg') no-repeat center;
+  }
 }
 
 </style>

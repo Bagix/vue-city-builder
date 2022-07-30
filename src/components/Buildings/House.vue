@@ -1,5 +1,7 @@
 <template>
-  <div class="building" @click="handleClick"/>
+  <div class="building" @click="handleClick">
+    <div class="image"/>
+  </div>
 </template>
 
 <script lang="ts">
@@ -22,9 +24,18 @@ export default class House extends Vue {
 .building {
   width: 100px;
   height: 100px;
-  background-color: #f00;
   border: 1px solid #000;
   cursor: pointer;
+  padding: 10px;
+  background-image: url('../../assets/field-bg.jpg');
+
+  .image {
+    width: 100%;
+    height: 100%;
+    background-color: #ed143d;
+    mask: url('../../assets/house.svg') no-repeat center;
+  }
+
 }
 
 </style>
