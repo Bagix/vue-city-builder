@@ -40,14 +40,15 @@ export default class Field extends Vue {
 .field {
   width: 100px;
   height: 100px;
-  background: url('../assets/field-bg.jpg');
+  background-image: url('../assets/field-bg.jpg');
   border: 1px solid #000;
   cursor: pointer;
   transition: background .15s linear, transform .15s linear;
+  background-blend-mode: luminosity;
 }
 
 .drag-enter {
-  background: #ffff63;
+  background-color: #ffff63;
   transform: scale(1.15)
 }
 

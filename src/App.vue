@@ -8,7 +8,7 @@
   </div>
 
   <div class="wrapper">
-    <div ref="gameBoard" class="game-board">
+    <div class="game-board">
       <component
         v-for="(field, index) in 16"
         :is="getBlock(index)"
@@ -30,6 +30,7 @@
 
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
+import { saveFirstbuilding } from '@/Utils/share';
 import Field from './components/Field.vue';
 import House from './components/Buildings/House.vue';
 import SideMenu from './components/SideMenu.vue';
@@ -38,7 +39,9 @@ import Sawmill from './components/Buildings/Sawmill.vue';
 import FieldMenu from './components/FieldMenu.vue';
 import DayNight from './components/DayNight.vue';
 import store from './store';
-import { IBuilding, IBuildingField, IResources } from './Utils/types';
+import {
+  IBuilding, IBuildingCost, IBuildingField, IResources,
+} from './Utils/types';
 
 @Options({
   components: {
@@ -71,22 +74,17 @@ export default class App extends Vue {
 
   public dropBuilding(type: string, fieldId: number): void {
     const jsonCity = window.localStorage.getItem('city');
-    const buildingsArray = store.state.buildings;
     const newBuilding = { fieldId, type };
+    const buildingsArray = store.state.buildings;
     const building = buildingsArray.find((b) => b.type === type)!;
-
-    if (!jsonCity) {
-      const currentDate = (new Date()).toString();
-
-      window.localStorage.setItem('city', JSON.stringify([newBuilding]));
-      window.localStorage.setItem('citySavedTime', currentDate);
-      store.commit('substractResources', building.cost);
-      window.localStorage.setItem('resources', JSON.stringify(this.currentResources));
-      return;
-    }
 
     if (building.instantResources) {
       store.commit('addResources', building.instantResources);
+    }
+
+    if (!jsonCity) {
+      this.initCity(newBuilding, building.cost);
+      return;
     }
 
     const city = JSON.parse(jsonCity) as IBuildingField[];
@@ -98,6 +96,12 @@ export default class App extends Vue {
     window.localStorage.setItem('citySavedTime', currentDate);
 
     store.commit('substractResources', building.cost);
+    window.localStorage.setItem('resources', JSON.stringify(this.currentResources));
+  }
+
+  public initCity(newBuilding: IBuildingField, cost: IBuildingCost): void {
+    saveFirstbuilding(newBuilding);
+    store.commit('substractResources', cost);
     window.localStorage.setItem('resources', JSON.stringify(this.currentResources));
   }
 
@@ -210,6 +214,10 @@ html {
   display: flex;
   flex-wrap: wrap;
   width: 400px;
+
+  .building {
+    background-image: url('./assets/field-bg.jpg');
+  }
 }
 
 .resources-box {

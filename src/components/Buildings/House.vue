@@ -27,7 +27,6 @@ export default class House extends Vue {
   border: 1px solid #000;
   cursor: pointer;
   padding: 10px;
-  background-image: url('../../assets/field-bg.jpg');
 
   .image {
     width: 100%;

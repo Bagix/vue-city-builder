@@ -1,4 +1,4 @@
-import { IBuildingCost } from './types';
+import { IBuildingCost, IBuildingField } from './types';
 
 /* eslint-disable import/prefer-default-export */
 export function buildingCostString(cost:IBuildingCost): string {
@@ -7,4 +7,10 @@ export function buildingCostString(cost:IBuildingCost): string {
     Cost:
     ${costs.toString()}
   `;
+}
+
+export function saveFirstbuilding(newBuilding: IBuildingField): void {
+  const currentDate = (new Date()).toString();
+  window.localStorage.setItem('city', JSON.stringify([newBuilding]));
+  window.localStorage.setItem('citySavedTime', currentDate);
 }

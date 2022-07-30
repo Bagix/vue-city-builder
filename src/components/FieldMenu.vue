@@ -22,7 +22,7 @@ import { Vue } from 'vue-class-component';
 import { Prop } from 'vue-property-decorator';
 import store from '@/store';
 import { IBuilding, IBuildingCost, IBuildingField } from '@/Utils/types';
-import { buildingCostString } from '@/Utils/share';
+import { buildingCostString, saveFirstbuilding } from '@/Utils/share';
 
 export default class FieldMenu extends Vue {
   @Prop()
@@ -82,11 +82,8 @@ export default class FieldMenu extends Vue {
    * @param cost cost of new building
    */
   public initCity(newBuilding: IBuildingField, cost: IBuildingCost): void {
-    const currentDate = (new Date()).toString();
-
-    window.localStorage.setItem('city', JSON.stringify([newBuilding]));
+    saveFirstbuilding(newBuilding);
     this.updateResources(cost);
-    window.localStorage.setItem('citySavedTime', currentDate);
     store.commit('toggleMenu');
   }
 

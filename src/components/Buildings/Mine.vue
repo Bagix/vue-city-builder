@@ -27,7 +27,6 @@ export default class Mine extends Vue {
   padding: 10px;
   border: 1px solid #000;
   cursor: pointer;
-  background-image: url('../../assets/field-bg.jpg');
 
   .image {
     width: 100%;
