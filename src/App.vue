@@ -1,5 +1,5 @@
 <template>
-  <button class="theme-switch" :class="{'light': isDarkTheme}" @click="switchTheme">Switch Theme</button>
+  <DayNight @change="switchTheme"/>
   <div class="resources-box">
     <p v-for="(resource, name) in currentResources"  :key="name" :class="name">
       <span class="name">{{name}}:</span>
@@ -36,6 +36,7 @@ import SideMenu from './components/SideMenu.vue';
 import Mine from './components/Buildings/Mine.vue';
 import Sawmill from './components/Buildings/Sawmill.vue';
 import FieldMenu from './components/FieldMenu.vue';
+import DayNight from './components/DayNight.vue';
 import store from './store';
 import { IBuilding, IBuildingField, IResources } from './Utils/types';
 
@@ -47,6 +48,7 @@ import { IBuilding, IBuildingField, IResources } from './Utils/types';
     Mine,
     Sawmill,
     SideMenu,
+    DayNight,
   },
 })
 
@@ -159,10 +161,9 @@ export default class App extends Vue {
     store.commit('setResources', resources);
   }
 
-  public switchTheme(): void {
-    this.isDarkTheme = !this.isDarkTheme;
+  public switchTheme(isNight: boolean): void {
+    this.isDarkTheme = isNight;
     const html = document.querySelector('html')!;
-    console.log('tutaj', this.isDarkTheme, html);
 
     if (this.isDarkTheme) {
       html.classList.add('dark');
@@ -256,39 +257,6 @@ html {
 
 .wrapper .side-menu {
   margin-left: 50px;
-}
-
-.theme-switch {
-  font-size: 16px;
-  background: #0f1437;
-  color: #fff;
-  padding: 10px 16px;
-  border-radius: 5px;
-  margin: 30px 0 60px;
-  border-color: #0f1437;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background .1s linear, color .1s linear .2s, box-shadow .2s linear,
-              transform .2s cubic-bezier(0,1.25,.47,1.5);
-
-  &:hover {
-    box-shadow: 0 0 10px 10px #0f1437;
-    transform: scale(2)
-  }
-
-  &.light {
-    background: #fefefe;
-    color: #0f1437;
-    border-color: #fefefe;
-
-    &:hover {
-      box-shadow: 0 0 10px 10px #fefefe;
-    }
-  }
-
-  &:active {
-    border-color: transparent;
-  }
 }
 
 </style>
