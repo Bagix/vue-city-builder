@@ -1,12 +1,6 @@
 <template>
   <DayNight @change="switchTheme"/>
-  <div class="resources-box">
-    <p v-for="(resource, name) in currentResources"  :key="name" :class="name">
-      <span class="name">{{name}}:</span>
-      <span class="value">{{resource}}</span>
-    </p>
-  </div>
-
+  <ResourcesBox/>
   <div class="wrapper">
     <div ref="gameBoard" class="game-board">
       <component
@@ -37,11 +31,10 @@ import SideMenu from './components/SideMenu.vue';
 import Mine from './components/Buildings/Mine.vue';
 import Sawmill from './components/Buildings/Sawmill.vue';
 import FieldMenu from './components/Menu/FieldMenu.vue';
+import ResourcesBox from './components/ResourcesBox.vue';
 import DayNight from './components/DayNight.vue';
 import store from './store';
-import {
-  IBuilding, IBuildingCost, IBuildingField, IResources,
-} from './Utils/types';
+import { IBuildingCost, IBuildingField, IResources } from './Utils/types';
 
 @Options({
   components: {
@@ -52,6 +45,7 @@ import {
     Sawmill,
     SideMenu,
     DayNight,
+    ResourcesBox,
   },
 })
 export default class App extends Vue {
@@ -138,32 +132,6 @@ export default class App extends Vue {
     store.commit('toggleMenu');
   }
 
-  public updateResources(): void {
-    const savedResourcesValue = window.localStorage.getItem('resources');
-    const lastDateString = window.localStorage.getItem('citySavedTime');
-    const jsonCity = window.localStorage.getItem('city');
-
-    if (!savedResourcesValue || !lastDateString || !jsonCity) {
-      return;
-    }
-
-    const city = JSON.parse(jsonCity) as IBuilding[];
-    const resources = JSON.parse(savedResourcesValue) as Record<string, number>;
-    const lastDate = new Date(lastDateString);
-    const currentDate = new Date();
-    const minutes = Math.trunc((currentDate.getTime() - lastDate.getTime()) / 60000);
-
-    city.forEach((building) => {
-      const currentBuilding = store.state.buildings.find((baseBuilding) => baseBuilding.type === building.type)!;
-
-      Object.entries(currentBuilding.generate).forEach((entry) => {
-        resources[entry[0]] += entry[1]! * minutes;
-      });
-    });
-
-    store.commit('setResources', resources);
-  }
-
   public switchTheme(isNight: boolean): void {
     this.isDarkTheme = isNight;
     const html = document.querySelector('html')!;
@@ -173,10 +141,6 @@ export default class App extends Vue {
     } else {
       html.classList.remove('dark');
     }
-  }
-
-  public mounted(): void {
-    this.updateResources();
   }
 }
 </script>
@@ -217,43 +181,6 @@ html {
   .building {
     background-image: url('./assets/field-bg.jpg');
   }
-}
-
-.resources-box {
-  display: flex;
-  justify-content: space-between;
-  margin: 16px 0;
-  font-weight: bold;
-  width: 400px;
-  margin: auto;
-  background: #fefefe;
-
-  .value {
-    margin-left: 5px;
-  }
-
-  .gold .name {
-    color: gold
-  }
-
-  .stones .name {
-    color: #000
-  }
-
-  .woods .name {
-    color: #8e1515
-  }
-
-  .workers .name {
-    color: #ed143d
-  }
-}
-
-.resources-box {
-  border: 2px solid black;
-  border-radius: 10px;
-  padding: 5px 15px;
-  margin-bottom: 16px;
 }
 
 .wrapper {
